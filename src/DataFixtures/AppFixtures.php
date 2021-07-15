@@ -46,11 +46,11 @@ class AppFixtures extends Fixture
         // La fonction loadAdmins() ne renvoit pas de données mais les autres
         // fontions renvoit des données qui sont nécessaires à d'autres fonctions.
         $this->loadAdmins($manager);
-        $borrowers = $this->loadBorrowers($manager, $borrowerCount);
         $authors = $this->loadAuthors($manager, $authorCount);
         $genres = $this->loadGenres($manager, $listGenre);
         $books = $this->loadBooks($manager, $authors, $genres, $booksCount);
-        $borrowings = $this->loadBorrowings($manager, $books, $borrowers, $borrowingsCount);   
+        $borrowers = $this->loadBorrowers($manager, $borrowerCount);
+        $borrowings = $this->loadBorrowings($manager, $borrowers, $books, $borrowingsCount);   
 
         // Exécution des requêtes.
         // C-à-d envoi de la requête SQL à la BDD.
@@ -163,8 +163,9 @@ class AppFixtures extends Fixture
         $books[] = $book;
 
     // Création de livres avec faker et la boucle
-        for($i = 3; $i < $count; $i++) {
+        for($i = 3; $i < 1000; $i++) {
 
+            $book = new Book();
             $book->setTitle($this->faker->realTextBetween($min = 6, $max = 12));
             $book->setYearEdition($this->faker->numberBetween($min = 2000, $max = 2020));
             $book->setNumberPages($this->faker->numberBetween($min = 100, $max = 300));
@@ -182,91 +183,93 @@ class AppFixtures extends Fixture
         return $books;
     }
 
-    
-    public function loadGenres(ObjectManager $manager, array $listGenre)
+    public function loadBorrowers(ObjectManager $manager, int $count)
     {
 
-        $genres = [];
+        $borrowers = [];
 
-        $genre = new Genre();
-        $genre->setName($listGenre[0]);
-        $genre->setDescription("NULL");
-        $manager->persist($genre);
-        $genres[] = $genre;
+        // Création d'un User avec un role emprunteur foo
+        $user = new User();
+        $user->setEmail('foo.foo@example.com');
+        $user->setRoles(['ROLE_EMPRUNTEUR']);
+        $password = $this->encoder->encodePassword($user, '123');
+        $user->setPassword($password);
+        $manager->persist($user);
 
-        $genre = new Genre();
-        $genre->setName($listGenre[1]);
-        $genre->setDescription("NULL");
-        $manager->persist($genre);
-        $genres[] = $genre;
+        $borrower = new Borrower();
+        $borrower->setLastname('foo');
+        $borrower->setFirstname('foo');
+        $borrower->setPhone('123456789');
+        $borrower->setActif(true);
+        $borrower->setCreationDate(\DateTime::createFromFormat('Y-m-d H:i:s','2020-01-01 10:00:00'));
+        $borrower->setUser($user);
+        $manager->persist($borrower);
+        $borrowers[] = $borrower;
 
-        $genre = new Genre();
-        $genre->setName($listGenre[2]);
-        $genre->setDescription("NULL");
-        $manager->persist($genre);
-        $genres[] = $genre;
+        // Création d'un User avec un role emprunteur bar
+        $user = new User();
+        $user->setEmail('bar.bar@example.com');
+        $user->setRoles(['ROLE_EMPRUNTEUR']);
+        $password = $this->encoder->encodePassword($user, '123');
+        $user->setPassword($password);
+        $manager->persist($user);
 
-        $genre = new Genre();
-        $genre->setName($listGenre[3]);
-        $genre->setDescription("NULL");
-        $manager->persist($genre);
-        $genres[] = $genre;
+        $borrower = new Borrower();
+        $borrower->setLastname('bar');
+        $borrower->setFirstname('bar');
+        $borrower->setPhone('123456789');
+        $borrower->setActif(false);
+        $borrower->setCreationDate(\DateTime::createFromFormat('Y-m-d H:i:s','2020-02-01 11:00:00'));
+        $borrower->setModificationDate(\DateTime::createFromFormat('Y-m-d H:i:s','2020-05-01 12:00:00'));
+        $borrower->setUser($user);
+        $manager->persist($borrower);
+        $borrowers[] = $borrower;
 
-        $genre = new Genre();
-        $genre->setName($listGenre[4]);
-        $genre->setDescription("NULL");
-        $manager->persist($genre);
-        $genres[] = $genre;
+        // Création d'un User avec un role emprunteur baz
+        $user = new User();
+        $user->setEmail('baz.baz@example.com');
+        $user->setRoles(['ROLE_EMPRUNTEUR']);
+        $password = $this->encoder->encodePassword($user, '123');
+        $user->setPassword($password);
+        $manager->persist($user);
 
-        $genre = new Genre();
-        $genre->setName($listGenre[5]);
-        $genre->setDescription("NULL");
-        $manager->persist($genre);
-        $genres[] = $genre;
+        $borrower = new Borrower();
+        $borrower->setLastname('baz');
+        $borrower->setFirstname('baz');
+        $borrower->setPhone('123456789');
+        $borrower->setActif(true);
+        $borrower->setCreationDate(\DateTime::createFromFormat('Y-m-d H:i:s','2020-03-01 12:00:00'));
+        $borrower->setUser($user);
+        $manager->persist($borrower);
+        $borrowers[] = $borrower;
 
-        $genre = new Genre();
-        $genre->setName($listGenre[6]);
-        $genre->setDescription("NULL");
-        $manager->persist($genre);
-        $genres[] = $genre;
+ 
+        // Création d'une boucle pour générer 100 utilisateurs au total
+        for($i = 3; $i < 100; $i++) {
+        $user = new User();
+        $user->setEmail($this->faker->email());
+        $user->setRoles(['ROLE_EMPRUNTEUR']);
+        $password = $this->encoder->encodePassword($user, '123');
+        $user->setPassword($password);
+        $manager->persist($user);
+        
 
-        $genre = new Genre();
-        $genre->setName($listGenre[7]);
-        $genre->setDescription("NULL");
-        $manager->persist($genre);
-        $genres[] = $genre;
-
-        $genre = new Genre();
-        $genre->setName($listGenre[8]);
-        $genre->setDescription("NULL");
-        $manager->persist($genre);
-        $genres[] = $genre;
-
-        $genre = new Genre();
-        $genre->setName($listGenre[9]);
-        $genre->setDescription("NULL");
-        $manager->persist($genre);
-        $genres[] = $genre;
-
-        $genre = new Genre();
-        $genre->setName($listGenre[10]);
-        $genre->setDescription("NULL");
-        $manager->persist($genre);
-        $genres[] = $genre;
-
-        $genre = new Genre();
-        $genre->setName($listGenre[11]);
-        $genre->setDescription("NULL");
-        $manager->persist($genre);
-        $genres[] = $genre;
-
-        $genre = new Genre();
-        $genre->setName($listGenre[12]);
-        $manager->persist($genre);
-        $genres[] = $genre;
-
-        return $genres;
-      
+        // Création d'un emprunteur avec des données aléatoires
+        // qui reste dans la boucle afin que chaque emprunteur soit lié à un compte utilisateur
+        $borrower = new Borrower();
+        $borrower->setLastname($this->faker->lastname());
+        $borrower->setFirstname($this->faker->firstname());
+        $borrower->setPhone($this->faker->phoneNumber());
+        $borrower->setActif($this->faker->boolean);
+        // utilisation de DateTimeThisYear
+        $borrower->setCreationDate($this->faker->dateTimeThisYear($max = 'now', $timezone=null));
+        $borrower->setModificationDate($this->faker->dateTimeThisYear($max = 'now', $timezone=null));
+        $borrower->setUser($user);
+        $manager->persist($borrower);
+        $borrowers[] = $borrower;
+        }
+        
+        return $borrowers;
     }
 
     public function loadBorrowings(ObjectManager $manager, array $borrowers, $books, int $count)
@@ -292,36 +295,35 @@ class AppFixtures extends Fixture
         $borrowing = new Borrowing();
         $borrowing->setBorrowingDate(\DateTime::createFromFormat('Y-m-d H:i:s', '2020-03-01 10:00:00'));
         $borrowingDate = $borrowing->getBorrowingDate();
-        $modificationDate = \DateTime::createFromFormat('Y-m-d H:i:s',  $borrowingDate->format('Y-m-d H:i:s'));
+        $returnDate = \DateTime::createFromFormat('Y-m-d H:i:s',  $borrowingDate->format('Y-m-d H:i:s'));
         // ajout d'un interval d' 1 mois à la date de début
-        $modificationDate->add(new \DateInterval('P1M'));
+        $returnDate->add(new \DateInterval('P1M'));
         $borrowing->setReturnDate($modificationDate);
         $borrowing->setBorrower($borrowers[1]);
         $borrowing->setBook($books[1]);
 
-        $manager->persist($borrower);
+        $manager->persist($borrowing);
         $borrowings[] = $borrowing;
 
         // 3ème emprunt
         $borrowing = new Borrowing();
         $borrowing->setBorrowingDate(\DateTime::createFromFormat('Y-m-d H:i:s', '2020-04-01 10:00:00'));
         $borrowingDate = $borrowing->getBorrowingDate();
-        $modificationDate = \DateTime::createFromFormat('Y-m-d H:i:s',  $borrowingDate->format('Y-m-d H:i:s'));
-        $borrowing->setReturnDate(NULL);
+        $returnDate = \DateTime::createFromFormat('Y-m-d H:i:s',  $borrowingDate->format('Y-m-d H:i:s'));
         $borrowing->setBorrower($borrowers[2]);
         $borrowing->setBook($books[2]);
 
-        $manager->persist($borrower);
+        $manager->persist($borrowing);
         $borrowings[] = $borrowing;
 
 
-        for($i = 2; $i < $count; $i++) {
+        for($i = 2; $i < 200; $i++) {
 
             $borrowing = new Borrowing();
             $borrowing->setBorrowingDate($this->faker->dateTime());
             $borrowingDate = $borrowing->getBorrowingDate();
             // création de la date de début
-            $modificationDate = \DateTime::createFromFormat('Y-m-d H:i:s',  $borrowingDate->format('Y-m-d H:i:s'));
+            $returnDate = \DateTime::createFromFormat('Y-m-d H:i:s',  $borrowingDate->format('Y-m-d H:i:s'));
 
             // Relation Many to One avec Borrower
             $borrowing->setBorrower($this->faker->randomElement($borrowers));
@@ -334,97 +336,91 @@ class AppFixtures extends Fixture
         return $borrowings;
     }
 
-    public function loadBorrowers(ObjectManager $manager, int $count)
+    public function loadGenres(ObjectManager $manager, array $listGenre)
     {
 
-        $borrowers = [];
+        $genres = [];
 
-        // Création d'un User avec un role emprunteur foo
-        $user = new User();
-        $user->setEmail('foo.foo@example.com');
-        $user->setRoles(['ROLE_EMPRUNTEUR']);
-        $password = $this->encoder->encodePassword($user, '123');
-        $user->setPassword($password);
-        $manager->persist($user);
+        $genre = new Genre();
+        $genre->setName($listGenre[0]);
 
-        $borrower = new Borrower();
-        $borrower->setLastname('foo');
-        $borrower->setFirstname('foo');
-        $borrower->setPhone('123456789');
-        $borrower->setActif(true);
-        $borrower->setCreationDate(\DateTime::createFromFormat('Y-m-d H:i:s','2020-01-01 10:00:00'));
-        $borrower->setModificationDate(NULL);
-        $borrower->setUser($user);
-        $manager->persist($borrower);
-        $borrowers[] = $borrower;
+        $manager->persist($genre);
+        $genres[] = $genre;
 
-        // Création d'un User avec un role emprunteur bar
-        $user = new User();
-        $user->setEmail('bar.bar@example.com');
-        $user->setRoles(['ROLE_EMPRUNTEUR']);
-        $password = $this->encoder->encodePassword($user, '123');
-        $user->setPassword($password);
-        $manager->persist($user);
+        $genre = new Genre();
+        $genre->setName($listGenre[1]);
 
-        $borrower = new Borrower();
-        $borrower->setLastname('bar');
-        $borrower->setFirstname('bar');
-        $borrower->setPhone('123456789');
-        $borrower->setActif(false);
-        $borrower->setCreationDate(\DateTime::createFromFormat('2020-02-01 11:00:00'));
-        $borrower->setModificationDate(\DateTime::createFromFormat('2020-05-01 12:00:00'));
-        $borrower->setUser($user);
-        $manager->persist($borrower);
-        $borrowers[] = $borrower;
+        $manager->persist($genre);
+        $genres[] = $genre;
 
-        // Création d'un User avec un role emprunteur baz
-        $user = new User();
-        $user->setEmail('baz.baz@example.com');
-        $user->setRoles(['ROLE_EMPRUNTEUR']);
-        $password = $this->encoder->encodePassword($user, '123');
-        $user->setPassword($password);
-        $manager->persist($user);
+        $genre = new Genre();
+        $genre->setName($listGenre[2]);
 
-        $borrower = new Borrower();
-        $borrower->setLastname('baz');
-        $borrower->setFirstname('baz');
-        $borrower->setPhone('123456789');
-        $borrower->setActif(true);
-        $borrower->setCreationDate(\DateTime::createFromFormat('2020-03-01 12:00:00'));
-        $borrower->setModificationDate(NULL);
-        $borrower->setUser($user);
-        $manager->persist($borrower);
-        $borrowers[] = $borrower;
+        $manager->persist($genre);
+        $genres[] = $genre;
 
- 
-        // Création d'une boucle pour générer 100 utilisateurs au total
-        for($i = 3; $i < $count; $i++) {
-        $user = new User();
-        $user->setEmail($this->faker->email());
-        $user->setRoles(['ROLE_EMPRUNTEUR']);
-        $password = $this->encoder->encodePassword($user, '123');
-        $user->setPassword($password);
-        $manager->persist($user);
-        
+        $genre = new Genre();
+        $genre->setName($listGenre[3]);
 
-        // Création d'un emprunteur avec des données aléatoires
-        // qui reste dans la boucle afin que chaque emprunteur soit lié à un compte utilisateur
-        $borrower = new Borrower();
-        $borrower->setLastname($this->faker->lastname());
-        $borrower->setFirstname($this->faker->firstname());
-        $borrower->setPhone($this->faker->phoneNumber());
-        $borrower->setActif($this->faker->boolean);
-        // utilisation de DateTimeThisYear
-        $borrower->setCreationDate($this->faker->dateTimeThisYear());
-        $creationDate = \DateTime::createFromFormat('Y-m-d H:i:s');
-        $borrower->setModificationDate($this->faker->dateTimeThisYear());
-        $modificationDate = \DateTime::createFromFormat('Y-m-d H:i:s');
-        $borrower->setUser($user);
-        $manager->persist($borrower);
-        $borrowers[] = $borrower;
-        }
-        
-        return $borrowers;
+        $manager->persist($genre);
+        $genres[] = $genre;
+
+        $genre = new Genre();
+        $genre->setName($listGenre[4]);
+
+        $manager->persist($genre);
+        $genres[] = $genre;
+
+        $genre = new Genre();
+        $genre->setName($listGenre[5]);
+
+        $manager->persist($genre);
+        $genres[] = $genre;
+
+        $genre = new Genre();
+        $genre->setName($listGenre[6]);
+
+        $manager->persist($genre);
+        $genres[] = $genre;
+
+        $genre = new Genre();
+        $genre->setName($listGenre[7]);
+
+        $manager->persist($genre);
+        $genres[] = $genre;
+
+        $genre = new Genre();
+        $genre->setName($listGenre[8]);
+
+        $manager->persist($genre);
+        $genres[] = $genre;
+
+        $genre = new Genre();
+        $genre->setName($listGenre[9]);
+
+        $manager->persist($genre);
+        $genres[] = $genre;
+
+        $genre = new Genre();
+        $genre->setName($listGenre[10]);
+
+        $manager->persist($genre);
+        $genres[] = $genre;
+
+        $genre = new Genre();
+        $genre->setName($listGenre[11]);
+
+        $manager->persist($genre);
+        $genres[] = $genre;
+
+        $genre = new Genre();
+        $genre->setName($listGenre[12]);
+
+        $manager->persist($genre);
+        $genres[] = $genre;
+
+        return $genres;
+      
     }
     
 }

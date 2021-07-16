@@ -261,9 +261,8 @@ class AppFixtures extends Fixture
         $borrower->setFirstname($this->faker->firstname());
         $borrower->setPhone($this->faker->phoneNumber());
         $borrower->setActif($this->faker->boolean);
-        // utilisation de DateTimeThisYear
-        $borrower->setCreationDate($this->faker->dateTimeThisYear($max = 'now', $timezone=null));
-        $borrower->setModificationDate($this->faker->dateTimeThisYear($max = 'now', $timezone=null));
+        // utilisation de DateTimeThisDecade
+        $borrower->setCreationDate($this->faker->dateTimeThisDecade());
         $borrower->setUser($user);
         $manager->persist($borrower);
         $borrowers[] = $borrower;
@@ -281,10 +280,10 @@ class AppFixtures extends Fixture
         $borrowing = new Borrowing();
         $borrowing->setBorrowingDate (\DateTime::createFromFormat('Y-m-d H:i:s','2020-02-01 10:00:00'));
         $borrowingDate = $borrowing->getBorrowingDate();
-        $modificationDate = \DateTime::createFromFormat('Y-m-d H:i:s',  $borrowingDate->format('Y-m-d H:i:s'));
+        $returnDate = \DateTime::createFromFormat('Y-m-d H:i:s',  $borrowingDate->format('Y-m-d H:i:s'));
         // ajout d'un interval d' 1 mois à la date de début   
-        $modificationDate->add(new \DateInterval('P1M'));
-        $borrowing->setReturnDate($modificationDate);
+        $returnDate->add(new \DateInterval('P1M'));
+        $borrowing->setReturnDate($returnDate);
         $borrowing->setBorrower($borrowers[0]);
         $borrowing->setBook($books[0]);
 
@@ -298,7 +297,7 @@ class AppFixtures extends Fixture
         $returnDate = \DateTime::createFromFormat('Y-m-d H:i:s',  $borrowingDate->format('Y-m-d H:i:s'));
         // ajout d'un interval d' 1 mois à la date de début
         $returnDate->add(new \DateInterval('P1M'));
-        $borrowing->setReturnDate($modificationDate);
+        $borrowing->setReturnDate($returnDate);
         $borrowing->setBorrower($borrowers[1]);
         $borrowing->setBook($books[1]);
 
@@ -308,8 +307,6 @@ class AppFixtures extends Fixture
         // 3ème emprunt
         $borrowing = new Borrowing();
         $borrowing->setBorrowingDate(\DateTime::createFromFormat('Y-m-d H:i:s', '2020-04-01 10:00:00'));
-        $borrowingDate = $borrowing->getBorrowingDate();
-        $returnDate = \DateTime::createFromFormat('Y-m-d H:i:s',  $borrowingDate->format('Y-m-d H:i:s'));
         $borrowing->setBorrower($borrowers[2]);
         $borrowing->setBook($books[2]);
 
@@ -320,11 +317,12 @@ class AppFixtures extends Fixture
         for($i = 2; $i < 200; $i++) {
 
             $borrowing = new Borrowing();
-            $borrowing->setBorrowingDate($this->faker->dateTime());
+            $borrowing->setBorrowingDate($this->faker->dateTimeThisDecade());
             $borrowingDate = $borrowing->getBorrowingDate();
             // création de la date de début
             $returnDate = \DateTime::createFromFormat('Y-m-d H:i:s',  $borrowingDate->format('Y-m-d H:i:s'));
-
+            $returnDate->add(new \DateInterval('P1M'));
+            $borrowing->setReturnDate($returnDate);
             // Relation Many to One avec Borrower
             $borrowing->setBorrower($this->faker->randomElement($borrowers));
             // Relation Many to One avec Book

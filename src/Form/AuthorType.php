@@ -22,7 +22,6 @@ class AuthorType extends AbstractType
             ->add('book', EntityType::class, [
                 // On précise que ce champ permet de gérer la relation avec une entité Book
                 'class' => Book::class,
-                // Le label qui est affiché utilisera 
                 'choice_label' => function(Book $book) {
                     return "{$book->getName()}";
                 },
@@ -33,6 +32,7 @@ class AuthorType extends AbstractType
                     ;
                 },
                 // Le champ est à choix multiple
+                // One To Many
                 'multiple' => true,
             ])
         ;

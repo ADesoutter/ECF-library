@@ -4,6 +4,8 @@ namespace App\Form;
 
 use App\Entity\Book;
 use App\Entity\Author;
+use App\Entity\Borrowing;
+use App\Entity\Genre;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -33,8 +35,6 @@ class BookType extends AbstractType
                         ->orderBy('s.lastname', 'ASC')
                     ;
                 },
-                // Le champ est à choix multiple
-                'multiple' => true,
                 'expanded' => true,
             ])
 
@@ -51,10 +51,11 @@ class BookType extends AbstractType
                         ->orderBy('s.description', 'ASC')
                     ;
                 },
+                // Many to Many
                 'multiple' => true,
                 'expanded' => true,
             ])
-            
+
             ->add('borrowing', EntityType::class, [
                 'class' => Borrowing::class,
                 'choice_label' => function(Borrowing $borrowing) {
@@ -68,6 +69,7 @@ class BookType extends AbstractType
                         ->orderBy('s.returnDate', 'ASC')
                     ;
                 },
+                // One to Many
                 'multiple' => true,
                 'expanded' => true,
             ])

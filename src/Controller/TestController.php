@@ -125,9 +125,11 @@ class TestController extends AbstractController
 
         // la liste des emprunteurs dont la date de création est antérieure au 01/03/2021 exclu (c-à-d strictement plus petit)
         // $borrower->setCreationDate(\DateTime::createFromFormat('Y-m-d','2021-03-01'));
-        $creation_date < setCreationDate(\DateTime::createFromFormat('Y-m-d','2021-03-01')
-        $borrowers = $borrowerRepository->findOneBy($creation_date);
-        dump($borrowers);
+        
+        // A REVOIR => ERREUR => HELP
+        // $creation_date < setCreationDate(\DateTime::createFromFormat('Y-m-d','2021-03-01')
+        // $borrowers = $borrowerRepository->findOneBy($creation_date);
+        // dump($borrowers);
 
         // la liste des emprunteurs inactifs (c-à-d dont l'attribut `actif` est égal à `false`)
         $noActif = setActif(false);
@@ -148,14 +150,18 @@ class TestController extends AbstractController
         dump($borrowings);
 
         // la liste des emprunts qui ont été retournés avant le 01/01/2021
-        $return_date < setReturnDate(\DateTime::createFromFormat('Y-m-d','2021-01-01')
-        $borrowings = $borrowingRepository->findOneBy($return_date);
-        dump($borrowings);
 
-        // la liste des emprunts qui n'ont pas encore été retournés (c-à-d dont la date de retour est nulle)
-        $return_date = NULL
-        $borrowings = $borrowingRepository->findOneBy($return_date);
-        dump($borrowings);
+        // A REVOIR => ERREUR => HELP
+        // $return_date < setReturnDate(\DateTime::createFromFormat('Y-m-d','2021-01-01')
+        // $borrowings = $borrowingRepository->findOneBy($return_date);
+        // dump($borrowings);
+
+        // // la liste des emprunts qui n'ont pas encore été retournés (c-à-d dont la date de retour est nulle)
+        
+        // A REVOIR => ERREUR => HELP
+        // $return_date = NULL
+        // $borrowings = $borrowingRepository->findOneBy($return_date);
+        // dump($borrowings);
 
         // les données de l'emprunt du livre dont l'id est `3` et qui n'a pas encore été retournés (c-à-d dont la date de retour est nulle)
         $borrowings = $repository->findOneBy([
@@ -178,10 +184,12 @@ class TestController extends AbstractController
         $entityManager->flush();
 
         // Requêtes de mise à jour : - modifier l'emprunt dont l'id est `3` - date de retour : 01/05/2020 à 10h00
-        $borrowing = $borrowingRepository->(3);
-        $return_date < setReturnDate(\DateTime::createFromFormat('Y-m-d H:i:s', '2020-05-01 10:00:00')
-        dump($borrowing);
-        $entityManager->flush();
+        
+        // A REVOIR => ERREUR => HELP
+        // $borrowing = $borrowingRepository->(3);
+        // $return_date < setReturnDate(\DateTime::createFromFormat('Y-m-d H:i:s', '2020-05-01 10:00:00')
+        // dump($borrowing);
+        // $entityManager->flush();
 
         // Requêtes de suppression : - supprimer l'emprunt dont l'id est `42`
         $borrowing = $borrowingRepository->removeBorrowing(42);

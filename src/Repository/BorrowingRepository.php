@@ -19,6 +19,68 @@ class BorrowingRepository extends ServiceEntityRepository
         parent::__construct($registry, Borrowing::class);
     }
 
+    public function findByBorrowing()
+    {
+        return $this->createQueryBuilder('b')
+            ->orderBy('b.borrowing_date', 'DESC')
+            ->setMaxResults(10)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+    public function findByReturnDate()
+    {
+        return $this->createQueryBuilder('b')
+            ->andWhere('b.return_date IS NULL')
+            // ->setParameter('val', $value)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    public function findOneByReturnDate(string $value)
+    {
+        return $this->createQueryBuilder('b')
+            ->andWhere('b.return_date < :val')
+            ->setParameter('val', $value)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    public function findByBorrowerId($value)
+    {
+        return $this->createQueryBuilder('b')
+            ->innerJoin('b.borrower', 'k')
+            ->andWhere('k.id = :value')
+            ->setParameter('value', $value)
+            // ->orderBy('b.title', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+    public function findByBookId($value)
+    {
+        return $this->createQueryBuilder('b')
+            ->innerJoin('b.book', 'k')
+            ->andWhere('k.id = :value')
+            ->setParameter('value', $value)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    public function findByReturnId(int $value)
+    {
+        return $this->createQueryBuilder('b')
+            ->where('b.id = :val')
+            ->andWhere('b.return_date IS NULL')
+            ->setParameter('val', $value)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
     // /**
     //  * @return Borrowing[] Returns an array of Borrowing objects
     //  */

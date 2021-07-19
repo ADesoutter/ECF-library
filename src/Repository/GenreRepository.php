@@ -22,6 +22,18 @@ class GenreRepository extends ServiceEntityRepository
     // /**
     //  * @return Genre[] Returns an array of Genre objects
     //  */
+    
+        public function findByName(string $value)
+    {
+        return $this->createQueryBuilder('g')
+            ->andWhere('g.name LIKE :val')
+            ->setParameter('val', "%{$value}%")
+            ->orderBy('g.id', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
     /*
     public function findByExampleField($value)
     {

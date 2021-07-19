@@ -96,14 +96,14 @@ class TestController extends AbstractController
         $genre = $genreRepository->findByGenre(5); 
         $books = $bookRepository->find(2);
         $book->setTitle('Aperiendum est igitur');
-        $book->addGenre($genre)
+        $book->addGenre($genre);
         dump($books);
         $entityManager->flush();
 
         // Requête de suppression du livre dont l'id est '123'
         $books = $bookRepository->findOneById(123);
         dump($books);
-        $books = $bookRepository->remove($book));
+        $books = $bookRepository->remove($book);
         $entityManager->flush();
         dump($books);
         
@@ -164,7 +164,7 @@ class TestController extends AbstractController
         dump($borrowings);
 
         // // la liste des emprunts qui n'ont pas encore été retournés (c-à-d dont la date de retour est nulle)
-        $return_date = NULL
+        $return_date = NULL;
         $borrowings = $borrowingRepository->findByReturnDate($return_date);
         dump($borrowings);
 

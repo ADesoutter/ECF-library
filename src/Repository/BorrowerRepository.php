@@ -48,16 +48,16 @@ class BorrowerRepository extends ServiceEntityRepository
         ;
     }
 
-    public function findOneByActive(Boolean $value)
+    public function findOneByActif(Boolean $value)
     {
         return $this->createQueryBuilder('b')
-            ->andWhere('b.active = :val')
+            ->andWhere('b.actif = :val')
             ->setParameter('val', $value)
             ->getQuery()
             ->getOneOrNullResult()
         ;
     }
-    public function findOneByDate(string $value)
+    public function findOneByCreationDate(string $value)
     {
         return $this->createQueryBuilder('b')
             ->andWhere('b.creation_date < :val')

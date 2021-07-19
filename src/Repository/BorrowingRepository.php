@@ -19,7 +19,11 @@ class BorrowingRepository extends ServiceEntityRepository
         parent::__construct($registry, Borrowing::class);
     }
 
-    public function findByBorrowing()
+    // /**
+    //  * @return Borrowing[] Returns an array of Borrowing objects
+    //  */
+
+    public function findByLastTen()
     {
         return $this->createQueryBuilder('b')
             ->orderBy('b.borrowing_date', 'DESC')
@@ -32,7 +36,7 @@ class BorrowingRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('b')
             ->andWhere('b.return_date IS NULL')
-            // ->setParameter('val', $value)
+            ->setParameter('val', $value)
             ->getQuery()
             ->getResult()
         ;
@@ -62,15 +66,15 @@ class BorrowingRepository extends ServiceEntityRepository
     public function findByBookId($value)
     {
         return $this->createQueryBuilder('b')
-            ->innerJoin('b.book', 'k')
-            ->andWhere('k.id = :value')
+            ->innerJoin('b.book', 'g')
+            ->andWhere('g.id = :value')
             ->setParameter('value', $value)
             ->getQuery()
             ->getResult()
         ;
     }
 
-    public function findByReturnId(int $value)
+    public function findByIdAndReturn(int $value)
     {
         return $this->createQueryBuilder('b')
             ->where('b.id = :val')
@@ -81,9 +85,6 @@ class BorrowingRepository extends ServiceEntityRepository
         ;
     }
 
-    // /**
-    //  * @return Borrowing[] Returns an array of Borrowing objects
-    //  */
     /*
     public function findByExampleField($value)
     {

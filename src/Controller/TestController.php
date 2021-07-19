@@ -60,15 +60,18 @@ class TestController extends AbstractController
         dump($book);
 
         // Récupération des livres dont le titre contient le mot clé: "lorem".
-        $books = $bookRepository->findOneBy(['title' => 'lorem']);
+        $title = 'lorem';
+        $books = $bookRepository->findByTitle($title);
         dump($books);
 
         //Récupération de la liste des livres dont l'id de l'auteur est 2.
-        $books = $authorRepository->findOneBy(2);
+        $author = 2;
+        $books = $authorRepository->findByAuthor($author);
         dump($books);
 
         //Récupération de la liste des livres dont le genre contient le mot clé 'roman'.
-        $books = $bookRepository->findOneBy(['Genre' => 'roman']);
+        $genre = 'roman';
+        $books = $bookRepository->findByGenre($genre);
         dump($books);
 
         // Requête de création
@@ -85,20 +88,25 @@ class TestController extends AbstractController
         $book->setAuthor($authors[2]);
         $book->addGenre($genres[6]);
         dump($book);
+        $entityManager->persist($book);
         $entityManager->flush();
 
         // Requête de mise à jour d'un livre
         //- modifier le livre dont l'id est `2` - titre : Aperiendum est igitur - genre : roman d'aventure (id `5`)
-        $books = $bookRepository->Book(2);
+        $genre = $genreRepository->findByGenre(5); 
+        $books = $bookRepository->find(2);
+        $book->setTitle('Aperiendum est igitur');
+        $book->addGenre($genre)
         dump($books);
         $entityManager->flush();
 
         // Requête de suppression du livre dont l'id est '123'
-        $books = $bookRepository->removeBook(123);
+        $books = $bookRepository->findOneById(123);
         dump($books);
+        $books = $bookRepository->remove($book));
         $entityManager->flush();
-
-
+        dump($books);
+        
 
         // Les Emprunteurs
         // Liste complète des emprunteurs
@@ -106,11 +114,11 @@ class TestController extends AbstractController
         dump($borrowers);
 
         // les données de l'emprunteur dont l'id est '3'
-        $borrowers = $borrowerRepository->findOneBy(3);
+        $borrowers = $borrowerRepository->findOneById(3);
         dump($borrowers);
 
         // les données de l'emprunteur qui est relié à l'user dont l'id est '3'
-        $borrowers = $userRepository->findOneBy(3);
+        $borrowers = $userRepository->findOneById(3);
         dump($borrowers);
         
         // la liste des emprunteurs dont le nom ou le prénom contient le mot clé `foo`
@@ -125,47 +133,44 @@ class TestController extends AbstractController
 
         // la liste des emprunteurs dont la date de création est antérieure au 01/03/2021 exclu (c-à-d strictement plus petit)
         // $borrower->setCreationDate(\DateTime::createFromFormat('Y-m-d','2021-03-01'));
-        $date < '2021-03-01';
+        $date = '2021-03-01';
         $borrowers = $borrowerRepository->findByCreationDate($date);
         dump($borrowers);
 
         // la liste des emprunteurs inactifs (c-à-d dont l'attribut `actif` est égal à `false`)
         $isActif = false;
-        $borrowers = $borrowerRepository->findByActif($isActif);
+        $borrowers = $borrowerRepository->findOneByActif($isActif);
         dump($borrowers);
 
 
         // Les emprunts
         // la liste des 10 derniers emprunts au niveau chronologique
         $lastTen = 10;
-        $borrowings = $borrowerRepository->findByLAstTen($lastTen);
+        $borrowings = $borrowingRepository->findByLastTen($lastTen);
         dump($borrowings);
 
         // la liste des emprunts de l'emprunteur dont l'id est `2`
-        $borrowings = $borrowerRepository->findOneBy(2);
+        $borrowings = $borrowingRepository->findByBorrowerId(2);
         dump($borrowings);
 
         // la liste des emprunts du livre dont l'id est `3`
-        $borrowings = $bookRepository->findOneBy(3);
+        $borrowings = $borrowingRepository->findByBookId(3);
         dump($borrowings);
 
         // la liste des emprunts qui ont été retournés avant le 01/01/2021
 
         $return_date = '2021-01-01';
-        $borrowings = $borrowingRepository->findOneByDate($return_date);
+        $borrowings = $borrowingRepository->findOneByReturnDate($return_date);
         dump($borrowings);
 
         // // la liste des emprunts qui n'ont pas encore été retournés (c-à-d dont la date de retour est nulle)
-        
         $return_date = NULL
-        $borrowings = $borrowingRepository->findByDate($return_date);
+        $borrowings = $borrowingRepository->findByReturnDate($return_date);
         dump($borrowings);
 
         // les données de l'emprunt du livre dont l'id est `3` et qui n'a pas encore été retournés (c-à-d dont la date de retour est nulle)
-        $borrowings = $repository->findOneBy([
-            'id' => 3,
-            '$return_date' => NULL,
-        ]);
+        $borrowingIdAndReturn = $borrowingRepository->findByIdAndReturn(3);
+        dump($borrowingIdAndReturn);
         dump($borrowings);
 
 
@@ -176,21 +181,23 @@ class TestController extends AbstractController
         $Borrowing = new Borrowing();
         $Borrowing->setBorrowingDate(\DateTime::createFromFormat('Y-m-d H:i:s', '2020-12-01 16:00:00'));
         $borrowingDate = $borrowing->getBorrowingDate();
-        $Borrowing->setBorrower($borrowers[0]);
-        $Borrowing->setBook($books[0]);
+        $borrowing->setBorrower($borrowers[0]);
+        $borrowing->setBook($books[0]);
         dump($borrowing);
+        $entityManager->persist($newBorrowing);
         $entityManager->flush();
 
         // Requêtes de mise à jour : - modifier l'emprunt dont l'id est `3` - date de retour : 01/05/2020 à 10h00
         
-        $borrowing = $borrowingRepository->(3);
-        '2020-05-01 10:00:00'
+        $borrowing = $borrowingRepository->findOneById(3);
+        $borrowing->setReturnDate(\DateTime::createFromFormat('Y-m-d H:i:s', '2020-05-01 10:00:00'));
         dump($borrowing);
+        $entityManager->persist($borrowing);
         $entityManager->flush();
 
         // Requêtes de suppression : - supprimer l'emprunt dont l'id est `42`
-        $borrowing = $borrowingRepository->removeBorrowing(42);
-        dump($borrowing);
+        $borrowing = $borrowingRepository->findOneById(42);
+        $entityManager->remove($borrowing);
         $entityManager->flush();
 
         exit();

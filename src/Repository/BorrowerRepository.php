@@ -40,7 +40,7 @@ class BorrowerRepository extends ServiceEntityRepository
     public function findByNumber(string $value)
     {
         return $this->createQueryBuilder('b')
-            ->where('b.phone_number LIKE :value')
+            ->where('b.phone LIKE :value')
             ->setParameter('value', "%{$value}%")
             ->orderBy('b.firstname', 'ASC')
             ->getQuery()
@@ -48,7 +48,7 @@ class BorrowerRepository extends ServiceEntityRepository
         ;
     }
 
-    public function findOneByActif(Boolean $value)
+    public function findByActif(Boolean $value)
     {
         return $this->createQueryBuilder('b')
             ->andWhere('b.actif = :val')
@@ -57,6 +57,7 @@ class BorrowerRepository extends ServiceEntityRepository
             ->getOneOrNullResult()
         ;
     }
+
     public function findOneByCreationDate(string $value)
     {
         return $this->createQueryBuilder('b')
@@ -84,15 +85,15 @@ class BorrowerRepository extends ServiceEntityRepository
     }
     */
 
-    public function findOneBySomeField($value): ?Borrower
-    {
-        return $this->createQueryBuilder('b')
-            ->andWhere('b.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
+    // public function findOneBySomeField($value): ?Borrower
+    // {
+    //     return $this->createQueryBuilder('b')
+    //         ->andWhere('b.exampleField = :val')
+    //         ->setParameter('val', $value)
+    //         ->getQuery()
+    //         ->getOneOrNullResult()
+    //     ;
+    // }
 
 
     public function findOneByUser(User $user, string $role = '')

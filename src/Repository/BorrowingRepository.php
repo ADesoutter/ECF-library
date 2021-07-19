@@ -36,7 +36,7 @@ class BorrowingRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('b')
             ->andWhere('b.return_date IS NULL')
-            ->setParameter('val', $value)
+            // ->setParameter('val', $value)
             ->getQuery()
             ->getResult()
         ;

@@ -2,6 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\Author;
+use App\Entity\Book;
+use App\Entity\Borrowing;
+use App\Entity\Genre;
 use App\Entity\User;
 use App\Repository\AuthorRepository;
 use App\Repository\BookRepository;
@@ -41,11 +45,12 @@ class TestController extends AbstractController
         dump($user);
 
         // Récupération des données de l'adresse email 'foo@example.com'.
-        $user->$userRepository->findByEmail('foo@example.com');
+        $foo = 'foo@example.com';
+        $user = $userRepository->findOneByEmail($foo);
         dump($user);
 
         // Récupération des données des users dont le role est ROLE_EMPRUNTEUR.
-        $user->$userRepository->findByRole('ROLE_EMPRUNTEUR');
+        $user = $userRepository->findByRole('ROLE_EMPRUNTEUR');
         dump($user);
 
 
@@ -66,7 +71,7 @@ class TestController extends AbstractController
 
         //Récupération de la liste des livres dont l'id de l'auteur est 2.
         $author = 2;
-        $books = $authorRepository->findByAuthor($author);
+        $books = $bookRepository->findByAuhtor($author);
         dump($books);
 
         //Récupération de la liste des livres dont le genre contient le mot clé 'roman'.
@@ -79,33 +84,34 @@ class TestController extends AbstractController
         // - titre : Totum autem id externum    - année d'édition : 2020
         // - nombre de pages : 300              - code ISBN : 9790412882714
         // - auteur : Hugues Cartier (id `2`)   - genre : science-fiction (id `6`)
-        $books[] = $book;
-        $book = new Book();
-        $book->setTitle('Totum autem id externum');
-        $book->setYearEdition('2020');
-        $book->setNumberPages('300');
-        $book->setCodeIsbn('9790412882714');
-        $book->setAuthor($authors[2]);
-        $book->addGenre($genres[6]);
-        dump($book);
-        $entityManager->persist($book);
+        $books = $bookRepository->findAll();
+        $authors = $authorRepository->findAll();
+        $genres = $genreRepository->findAll();
+        $newBook = new Book();
+        $newBook->setTitle('Totum autem id externum');
+        $newBook->setYearEdition('2020');
+        $newBook->setNumberPages('300');
+        $newBook->setCodeIsbn('9790412882714');
+        $newBook->setAuthor($authors[1]);
+        $newBook->addGenre($genres[5]);
+        dump($newBook);
+        $entityManager->persist($newBook);
         $entityManager->flush();
 
         // Requête de mise à jour d'un livre
         //- modifier le livre dont l'id est `2` - titre : Aperiendum est igitur - genre : roman d'aventure (id `5`)
-        $genre = $genreRepository->findByGenre(5); 
-        $books = $bookRepository->find(2);
-        $book->setTitle('Aperiendum est igitur');
-        $book->addGenre($genre);
-        dump($books);
+        $bookId2 = $bookRepository->find(2);
+        $bookId2->setTitle('Aperiendum est igitur');
+        $bookId2->addGenre($genres[4]);
+        $entityManager->persist($bookId2);
         $entityManager->flush();
+        dump($bookId2);
 
         // Requête de suppression du livre dont l'id est '123'
-        $books = $bookRepository->findOneById(123);
-        dump($books);
-        $books = $bookRepository->remove($book);
-        $entityManager->flush();
-        dump($books);
+        // $removeBook = $bookRepository->findById(123);
+        // $entityManager->remove($removeBook[0]);
+        // $entityManager->flush();
+        // dump($removeBook);
         
 
         // Les Emprunteurs
@@ -134,13 +140,12 @@ class TestController extends AbstractController
         // la liste des emprunteurs dont la date de création est antérieure au 01/03/2021 exclu (c-à-d strictement plus petit)
         // $borrower->setCreationDate(\DateTime::createFromFormat('Y-m-d','2021-03-01'));
         $date = '2021-03-01';
-        $borrowers = $borrowerRepository->findByCreationDate($date);
+        $borrowers = $borrowerRepository->findOneByCreationDate($date);
         dump($borrowers);
 
         // la liste des emprunteurs inactifs (c-à-d dont l'attribut `actif` est égal à `false`)
-        $isActif = false;
-        $borrowers = $borrowerRepository->findOneByActif($isActif);
-        dump($borrowers);
+        // $borrowerInactif = $borrowerRepository->findByActif(false);
+        // dump($borrowerInactif);
 
 
         // Les emprunts
@@ -177,15 +182,12 @@ class TestController extends AbstractController
         // Requête de création
         // - ajouter un nouvel emprunt          - date d'emprunt : 01/12/2020 à 16h00       - date de retour : aucune date      
         // - emprunteur : foo foo (id `1`)      - livre : Lorem ipsum dolor sit amet (id `1`)
-        $borrowings[] = $borrowing;
-        $Borrowing = new Borrowing();
-        $Borrowing->setBorrowingDate(\DateTime::createFromFormat('Y-m-d H:i:s', '2020-12-01 16:00:00'));
-        $borrowingDate = $borrowing->getBorrowingDate();
-        $borrowing->setBorrower($borrowers[0]);
-        $borrowing->setBook($books[0]);
-        dump($borrowing);
-        $entityManager->persist($newBorrowing);
-        $entityManager->flush();
+        // $Borrowing = new Borrowing();
+        // $Borrowing->setBorrowingDate(\DateTime::createFromFormat('Y-m-d H:i:s', '2020-12-01 16:00:00'));
+        // $borrowing->setBorrower($borrowers[0]);
+        // $borrowing->setBook($books[0]);
+        // $entityManager->persist($borrowing);
+        // $entityManager->flush();
 
         // Requêtes de mise à jour : - modifier l'emprunt dont l'id est `3` - date de retour : 01/05/2020 à 10h00
         

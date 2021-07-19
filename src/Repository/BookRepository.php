@@ -34,10 +34,14 @@ class BookRepository extends ServiceEntityRepository
         ;
     }
 
+    /**
+    * @return Book[] Returns an array of Book objects
+    */
+
     public function findByAuhtor(int $id)
     {
         return $this->createQueryBuilder('b')
-            ->andWhere('b.authorId = :id')
+            ->andWhere('b.author = :id')
             ->setParameter('id', $id)
             ->orderBy('b.title', 'ASC')
             ->getQuery()
@@ -48,9 +52,9 @@ class BookRepository extends ServiceEntityRepository
     public function findByGenre($genre)
     {
         return $this->createQueryBuilder('b')
-            ->innerJoin('b.Genres', 'g')
-            ->andWhere('g.name LIKE :Genre')
-            ->setParameter('genre', "%{$Genre}%")
+            ->innerJoin('b.genre', 'g')
+            ->andWhere('g.name LIKE :genre')
+            ->setParameter('genre', "%{$genre}%")
             ->orderBy('b.title', 'ASC')
             ->getQuery()
             ->getResult()

@@ -79,11 +79,11 @@ class TestController extends AbstractController
         $books = $bookRepository->findByGenre($genre);
         dump($books);
 
-        // Requête de création
-        //Ajouter un nouveau livre
-        // - titre : Totum autem id externum    - année d'édition : 2020
-        // - nombre de pages : 300              - code ISBN : 9790412882714
-        // - auteur : Hugues Cartier (id `2`)   - genre : science-fiction (id `6`)
+//         // Requête de création
+//         //Ajouter un nouveau livre
+//         // - titre : Totum autem id externum    - année d'édition : 2020
+//         // - nombre de pages : 300              - code ISBN : 9790412882714
+//         // - auteur : Hugues Cartier (id `2`)   - genre : science-fiction (id `6`)
         $books = $bookRepository->findAll();
         $authors = $authorRepository->findAll();
         $genres = $genreRepository->findAll();
@@ -94,12 +94,12 @@ class TestController extends AbstractController
         $newBook->setCodeIsbn('9790412882714');
         $newBook->setAuthor($authors[1]);
         $newBook->addGenre($genres[5]);
-        dump($newBook);
         $entityManager->persist($newBook);
         $entityManager->flush();
+        dump($newBook);
 
-        // Requête de mise à jour d'un livre
-        //- modifier le livre dont l'id est `2` - titre : Aperiendum est igitur - genre : roman d'aventure (id `5`)
+//         // Requête de mise à jour d'un livre
+//         //- modifier le livre dont l'id est `2` - titre : Aperiendum est igitur - genre : roman d'aventure (id `5`)
         $bookId2 = $bookRepository->find(2);
         $bookId2->setTitle('Aperiendum est igitur');
         $bookId2->addGenre($genres[4]);
@@ -107,11 +107,13 @@ class TestController extends AbstractController
         $entityManager->flush();
         dump($bookId2);
 
-        // Requête de suppression du livre dont l'id est '123'
-        // $removeBook = $bookRepository->findById(123);
-        // $entityManager->remove($removeBook[0]);
+        // // Supprimer le livre dont l'id est `123`.
+        // $books = $bookRepository->findAll();
+        // $book123 = $books[122];
+        // // Suppression d'un book.
+        // $entityManager->remove($book123);
         // $entityManager->flush();
-        // dump($removeBook);
+        // dump($book123);
         
 
         // Les Emprunteurs
@@ -144,8 +146,8 @@ class TestController extends AbstractController
         dump($borrowers);
 
         // la liste des emprunteurs inactifs (c-à-d dont l'attribut `actif` est égal à `false`)
-        // $borrowerInactif = $borrowerRepository->findByActif(false);
-        // dump($borrowerInactif);
+        $borrowerInactif = $borrowerRepository->findByActif(false);
+        dump($borrowerInactif);
 
 
         // Les emprunts
@@ -182,12 +184,12 @@ class TestController extends AbstractController
         // Requête de création
         // - ajouter un nouvel emprunt          - date d'emprunt : 01/12/2020 à 16h00       - date de retour : aucune date      
         // - emprunteur : foo foo (id `1`)      - livre : Lorem ipsum dolor sit amet (id `1`)
-        // $Borrowing = new Borrowing();
-        // $Borrowing->setBorrowingDate(\DateTime::createFromFormat('Y-m-d H:i:s', '2020-12-01 16:00:00'));
-        // $borrowing->setBorrower($borrowers[0]);
-        // $borrowing->setBook($books[0]);
-        // $entityManager->persist($borrowing);
-        // $entityManager->flush();
+        $borrowing = new Borrowing();
+        $borrowing->setBorrowingDate(\DateTime::createFromFormat('Y-m-d H:i:s', '2020-12-01 16:00:00'));
+        $borrowing->setBorrower($borrowers[0]);
+        $borrowing->setBook($books[0]);
+        $entityManager->persist($borrowing);
+        $entityManager->flush();
 
         // Requêtes de mise à jour : - modifier l'emprunt dont l'id est `3` - date de retour : 01/05/2020 à 10h00
         

@@ -48,13 +48,13 @@ class BorrowerRepository extends ServiceEntityRepository
         ;
     }
 
-    public function findByActif(Boolean $value)
+    public function findByActif(bool $value)
     {
         return $this->createQueryBuilder('b')
             ->andWhere('b.actif = :val')
             ->setParameter('val', $value)
             ->getQuery()
-            ->getOneOrNullResult()
+            ->getResult()
         ;
     }
 

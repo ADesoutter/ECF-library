@@ -36,7 +36,6 @@ class BorrowingRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('b')
             ->andWhere('b.return_date IS NULL')
-            // ->setParameter('val', $value)
             ->getQuery()
             ->getResult()
         ;
@@ -58,7 +57,6 @@ class BorrowingRepository extends ServiceEntityRepository
             ->innerJoin('b.borrower', 'k')
             ->andWhere('k.id = :value')
             ->setParameter('value', $value)
-            // ->orderBy('b.title', 'ASC')
             ->getQuery()
             ->getResult()
         ;

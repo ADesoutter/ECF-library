@@ -20,11 +20,17 @@ class BorrowingController extends AbstractController
      */
     public function index(BorrowingRepository $borrowingRepository): Response
     {
+        // Lister les emprunts
+        // Quel est la nature de l'utilisateur
+        $this->getUser();
         return $this->render('borrowing/index.html.twig', [
             'borrowings' => $borrowingRepository->findAll(),
         ]);
+        
     }
 
+
+    // Créer un nouvel emprunt
     /**
      * @Route("/new", name="borrowing_new", methods={"GET","POST"})
      */
@@ -48,6 +54,7 @@ class BorrowingController extends AbstractController
         ]);
     }
 
+    // Afficher les détails d'un emprunt
     /**
      * @Route("/{id}", name="borrowing_show", methods={"GET"})
      */
@@ -58,6 +65,7 @@ class BorrowingController extends AbstractController
         ]);
     }
 
+    // Modifier un emprunt
     /**
      * @Route("/{id}/edit", name="borrowing_edit", methods={"GET","POST"})
      */
@@ -78,6 +86,7 @@ class BorrowingController extends AbstractController
         ]);
     }
 
+    // Supprimer un emprunt
     /**
      * @Route("/{id}", name="borrowing_delete", methods={"POST"})
      */

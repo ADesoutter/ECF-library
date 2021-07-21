@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\Book;
 use App\Entity\Borrower;
 use App\Entity\Borrowing;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -34,14 +35,12 @@ class BorrowingType extends AbstractType
                 // On précise que ce champ permet de gérer la relation avec une entité Borrower
                 'class' => Borrower::class,
                 'choice_label' => function(Borrower $borrower) {
-                    return "{$borrower->getLastname()} {$borrower->getFirstname()} {$borrower->getPhone()}
-                    {$borrower->getActif()} {$borrower->getCreationDate()} {$borrower->getModificationDate()}";
+                    return "{$borrower->getLastname()} {$borrower->getFirstname()}";
                 },
                 // Les emprunteurs sont triés par ordre croissant (c-à-d alphabétique) du champ titre
                 'query_builder' => function (EntityRepository $er) {
                     return $er->createQueryBuilder('s')
                         ->orderBy('s.lastname', 'ASC')
-                        ->orderBy('s.firstname', 'ASC')
                     ;
                 },
             ])

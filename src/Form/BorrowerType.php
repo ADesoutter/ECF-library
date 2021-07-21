@@ -15,23 +15,17 @@ class BorrowerType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+        ->add('user', UserType::class, [
+            'label_attr' => [
+                'class' => 'd-none',
+            ]
+        ])
             ->add('lastname')
             ->add('firstname')
             ->add('phone')
             ->add('actif')
             ->add('creation_date')
             ->add('modification_date')
-            ->add('user', EntityType::class, [
-                'class' => User::class,
-                'choice_label' => function(User $user) {
-                    return "{$user->getEmail()}";
-                },
-                'query_builder' => function (EntityRepository $er) {
-                    return $er->createQueryBuilder('s')
-                        ->orderBy('s.email', 'ASC')
-                    ;
-                },
-            ])
         ;
     }
 

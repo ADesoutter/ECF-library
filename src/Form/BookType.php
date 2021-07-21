@@ -4,7 +4,6 @@ namespace App\Form;
 
 use App\Entity\Book;
 use App\Entity\Author;
-use App\Entity\Borrowing;
 use App\Entity\Genre;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -27,52 +26,30 @@ class BookType extends AbstractType
                 'choice_label' => function(Author $author) {
                     return "{$author->getFirstname()} {$author->getLastname()}";
                 },
-                // Nécessaire du côté inverse sinon la relation n'est pas enregitrée après mise à jour.
-                'by_reference' => false,
+
                 'query_builder' => function (EntityRepository $er) {
-                    return $er->createQueryBuilder('s')
+                    return $er->createQueryBuilder('a')
                         ->orderBy('s.firstname', 'ASC')
                         ->orderBy('s.lastname', 'ASC')
                     ;
                 },
-                'expanded' => true,
             ])
 
             ->add('genre', EntityType::class, [
                 'class' => Genre::class,
                 'choice_label' => function(Genre $genre) {
-                    return "{$genre->getName()} {$genre->getDescription()}";
+                    return "{$genre->getName()}";
                 },
-                // Nécessaire du côté inverse sinon la relation n'est pas enregitrée après mise à jour.
-                'by_reference' => false,
+
                 'query_builder' => function (EntityRepository $er) {
-                    return $er->createQueryBuilder('s')
+                    return $er->createQueryBuilder('g')
                         ->orderBy('s.name', 'ASC')
-                        ->orderBy('s.description', 'ASC')
                     ;
                 },
                 // Many to Many
                 'multiple' => true,
-                'expanded' => true,
             ])
 
-            ->add('borrowing', EntityType::class, [
-                'class' => Borrowing::class,
-                'choice_label' => function(Borrowing $borrowing) {
-                    return "{$borrowing->getBorrowingDate()} {$borrowing->getReturnDate()}";
-                },
-                // Nécessaire du côté inverse sinon la relation n'est pas enregitrée après mise à jour.
-                'by_reference' => false,
-                'query_builder' => function (EntityRepository $er) {
-                    return $er->createQueryBuilder('s')
-                        ->orderBy('s.borrowingDate', 'ASC')
-                        ->orderBy('s.returnDate', 'ASC')
-                    ;
-                },
-                // One to Many
-                'multiple' => true,
-                'expanded' => true,
-            ])
         ;
     }
 

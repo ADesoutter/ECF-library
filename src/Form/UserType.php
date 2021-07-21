@@ -10,8 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
-use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\Regex;
+
 
 class UserType extends AbstractType
 {
@@ -22,7 +21,7 @@ class UserType extends AbstractType
             ->add('roles', ChoiceType::class, [
                 'choices'  => [
                     'admin' => 'ROLE_ADMIN',
-                    'user' => 'ROLE_USER',
+                    'borrower' => 'ROLE_EMPRUNTEUR',
                 ],
                 'multiple' => true,
                 'expanded' => true,
@@ -41,7 +40,7 @@ class UserType extends AbstractType
                     'class' => 'password-field',
                     'autocomplete' => 'new-password'
                 ]],
-                'required' => true,
+                'required' => false,
                 'first_options'  => ['label' => 'Password'],
                 'second_options' => ['label' => 'Repeat Password'],
                 'constraints' => [
@@ -51,12 +50,8 @@ class UserType extends AbstractType
                         // max length allowed by Symfony for security reasons
                         'max' => 4096,
                     ]),
-                    new NotBlank(),
                 ],
             ])
-            ->add('deletedAt')
-            ->add('createdAt')
-            ->add('updatedAt')
         ;
     }
 

@@ -22,7 +22,27 @@ class BorrowingController extends AbstractController
     {
         // Lister les emprunts
         // Quel est la nature de l'utilisateur
-        $this->getUser();
+        $user = $this->getUser();
+
+                // On vérifie si l'utilisateur est un student
+        // Note : on peut aussi utiliser $this->isGranted('ROLE_STUDENT') au
+        // lieu de in_array('ROLE_STUDENT', $user->getRoles()).
+        if (in_array('ROLE_STUDENT', $user->getRoles())) {
+            // L'utilisateur est un student
+
+            // On récupère le profil student lié au compte utilisateur
+            $student = $studentRepository->findOneByUser($user);
+
+            // On récupère la school year de l'utilisater 
+            $schoolYear = $student->getSchoolYear();
+            // On créé un tableau avec la school year de l'utilisateur.
+            // On est obligé de créer un tableau dans la variable $schoolYears
+            // car le template s'attend à ce qu'il puisse boucler sur la
+            // variable school_years.
+            $schoolYears = [$schoolYear];
+        }
+
+
         return $this->render('borrowing/index.html.twig', [
             'borrowings' => $borrowingRepository->findAll(),
         ]);

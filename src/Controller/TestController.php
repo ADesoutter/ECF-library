@@ -103,13 +103,13 @@ class TestController extends AbstractController
         $bookId2 = $bookRepository->find(2);
         $bookId2->setTitle('Aperiendum est igitur');
         $bookId2->addGenre($genres[4]);
-        $entityManager->persist($bookId2);
         $entityManager->flush();
         dump($bookId2);
 
         // // Supprimer le livre dont l'id est `123`.
-        // $books = $bookRepository->findAll();
+        // $books = $bookRepository->find(123);
         // $book123 = $books[122];
+
         // // Suppression d'un book.
         // $entityManager->remove($book123);
         // $entityManager->flush();
@@ -126,7 +126,7 @@ class TestController extends AbstractController
         dump($borrowers);
 
         // les données de l'emprunteur qui est relié à l'user dont l'id est '3'
-        $borrowers = $userRepository->findOneById(3);
+        $borrowerRepository = $userRepository->findOneById(3);
         dump($borrowers);
         
         // la liste des emprunteurs dont le nom ou le prénom contient le mot clé `foo`
@@ -196,7 +196,6 @@ class TestController extends AbstractController
         $borrowing = $borrowingRepository->findOneById(3);
         $borrowing->setReturnDate(\DateTime::createFromFormat('Y-m-d H:i:s', '2020-05-01 10:00:00'));
         dump($borrowing);
-        $entityManager->persist($borrowing);
         $entityManager->flush();
 
         // Requêtes de suppression : - supprimer l'emprunt dont l'id est `42`

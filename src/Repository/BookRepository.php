@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Book;
+use App\Entity\Borrower;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -61,29 +62,31 @@ class BookRepository extends ServiceEntityRepository
         ;
     }
 
-    /*
-    public function findByExampleField($value)
+    public function findByRole(string $role)
+     {
+         return $this->createQueryBuilder('u')
+             ->andWhere('u.roles LIKE :role')
+             ->setParameter('role', "%{$role}%")
+             ->orderBy('u.email', 'ASC')
+             ->getQuery()
+             ->getResult()
+        ;
+    }
+
+
+    public function findByTitleOrAuthor($value)
     {
         return $this->createQueryBuilder('b')
-            ->andWhere('b.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('b.id', 'ASC')
-            ->setMaxResults(10)
+            ->innerJoin('b.author', 'a')
+            ->andWhere('a.lastname LIKE :author')
+            ->orWhere('b.title LIKE :title')
+            ->orWhere('a.firstname LIKE :author')
+            ->setParameter('title', "%{$value}%")
+            ->setParameter('author', "%{$value}%")
+            ->orderBy('b.title', 'ASC')
             ->getQuery()
             ->getResult()
         ;
     }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?Book
-    {
-        return $this->createQueryBuilder('b')
-            ->andWhere('b.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

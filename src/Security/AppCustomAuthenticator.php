@@ -103,23 +103,9 @@ class AppCustomAuthenticator extends AbstractFormLoginAuthenticator implements P
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
-//     {
-//         if ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
-//             return new RedirectResponse($targetPath);
-//         }
-
-//         // For example : return new RedirectResponse($this->urlGenerator->generate('some_route'));
-//         throw new \Exception('TODO: provide a valid redirect inside '.__FILE__);
-//     }
-
-//     protected function getLoginUrl()
-//     {
-//         return $this->urlGenerator->generate(self::LOGIN_ROUTE);
-//     }
-// }
     {
-    if ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
-        return new RedirectResponse($targetPath);
+        if ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
+            return new RedirectResponse($targetPath);
     }
 
     $user = $token->getUser();
@@ -128,23 +114,11 @@ class AppCustomAuthenticator extends AbstractFormLoginAuthenticator implements P
         $url = $this->urlGenerator->generate('borrower_index');
     } elseif (in_array('ROLE_BORROWER', $user->getRoles())) {
         $url = $this->urlGenerator->generate('loan_index');
-    // } elseif (in_array('ROLE_STUDENT', $user->getRoles())) {
-    //     $student = $this->studentRepository->findOneByUser($user);
-
-        // if (!$borrower) {
-        //     throw new \Exception("Cet utilisateur n'est rattaché à aucun profil : {$user->getId()} {$user->getEmail()}");
-        // }
-
-        // $url = $this->urlGenerator->generate('borrower_show', [
-        //     'id' => $borrower->getId(),
-        // ]);
-    // } elseif (in_array('ROLE_CLIENT', $user->getRoles())) {
-    //     $url = $this->urlGenerator->generate('project_index');
     } else {
         throw new \Exception("Votre rôle n'est pas reconnu");
     }
 
-    return new RedirectResponse($url);
+        return new RedirectResponse($url);
     }
 
     protected function getLoginUrl()

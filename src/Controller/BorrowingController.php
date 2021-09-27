@@ -5,10 +5,13 @@ namespace App\Controller;
 use App\Entity\Borrowing;
 use App\Form\BorrowingType;
 use App\Repository\BorrowingRepository;
+use App\Repository\BookRepository;
+use App\Repository\BorrowerRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * @Route("/borrowing")
@@ -18,7 +21,7 @@ class BorrowingController extends AbstractController
     /**
      * @Route("/", name="borrowing_index", methods={"GET"})
      */
-    public function index(BorrowingRepository $borrowingRepository): Response
+    public function index(BorrowingRepository $borrowingRepository, BorrowerRepository $borrowerRepository ): Response
     {
         // Lister les emprunts
         // Quel est la nature de l'utilisateur
@@ -27,19 +30,19 @@ class BorrowingController extends AbstractController
                 // On vérifie si l'utilisateur est un student
         // Note : on peut aussi utiliser $this->isGranted('ROLE_STUDENT') au
         // lieu de in_array('ROLE_STUDENT', $user->getRoles()).
-        if (in_array('ROLE_STUDENT', $user->getRoles())) {
+        if (in_array('ROLE_BORROWER', $user->getRoles())) {
             // L'utilisateur est un student
 
             // On récupère le profil student lié au compte utilisateur
-            $student = $studentRepository->findOneByUser($user);
+            $borrower = $borrowerRepository->findOneByUser($user);
 
             // On récupère la school year de l'utilisater 
-            $schoolYear = $student->getSchoolYear();
+            $borrowings = $borrower->getBorrowings();
             // On créé un tableau avec la school year de l'utilisateur.
             // On est obligé de créer un tableau dans la variable $schoolYears
             // car le template s'attend à ce qu'il puisse boucler sur la
             // variable school_years.
-            $schoolYears = [$schoolYear];
+            $borrowing = [$borrowing];
         }
 
 
@@ -78,16 +81,24 @@ class BorrowingController extends AbstractController
     /**
      * @Route("/{id}", name="borrowing_show", methods={"GET"})
      */
-    public function show(Borrowing $borrowing): Response
+    public function show(Borrowing $borrowing, BorrowerRepository $borrowerRepository, BookRepository $bookRepository): Response
     {
+        if($this->isGranted('ROLE_BORROWER')) {
+            $user = $this->getUser();
+            $borrower = $borrowerRepository->findOneByUser($user);
+            if (!$borrower->getBorrowings()->contains($borrowing)){
+                throw new NotFoundHttpException();
+            }
+        }
         return $this->render('borrowing/show.html.twig', [
-            'borrowing' => $borrowing,
+            'emprunt' => $emprunt,
+            'livre' => $emprunt->getBook()
         ]);
     }
 
-    // Modifier un emprunt
+    // Modifier un borrowing
     /**
-     * @Route("/{id}/edit", name="borrowing_edit", methods={"GET","POST"})
+     * @Route("/{id}/edit", name="admin_borrowing_edit", methods={"GET","POST"})
      */
     public function edit(Request $request, Borrowing $borrowing): Response
     {
@@ -108,7 +119,7 @@ class BorrowingController extends AbstractController
 
     // Supprimer un emprunt
     /**
-     * @Route("/{id}", name="borrowing_delete", methods={"POST"})
+     * @Route("/{id}", name="admin_borrowing_delete", methods={"POST"})
      */
     public function delete(Request $request, Borrowing $borrowing): Response
     {

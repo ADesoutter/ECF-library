@@ -29,29 +29,6 @@ class BorrowerController extends AbstractController
     }
 
     /**
-     * @Route("/new", name="borrower_new", methods={"GET","POST"})
-     */
-    public function new(Request $request): Response
-    {
-        $borrower = new Borrower();
-        $form = $this->createForm(BorrowerType::class, $borrower);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($borrower);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('borrower_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->render('borrower/new.html.twig', [
-            'borrower' => $borrower,
-            'form' => $form->createView(),
-        ]);
-    }
-
-    /**
      * @Route("/{id}", name="borrower_show", methods={"GET"})
      */
     public function show(Borrower $borrower): Response
@@ -61,37 +38,22 @@ class BorrowerController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}/edit", name="borrower_edit", methods={"GET","POST"})
-     */
-    public function edit(Request $request, Borrower $borrower): Response
+    private function redirectUser(string $route, Borrower $borrower, BorrowerRepository $borrowerRepository)
     {
-        $form = $this->createForm(BorrowerType::class, $borrower);
-        $form->handleRequest($request);
+        $user = $this->getUser();
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
 
-            return $this->redirectToRoute('borrower_index', [], Response::HTTP_SEE_OTHER);
+        if (in_array('ROLE_BORROWER', $user->getRoles())) {
+            $userBorrower = $borrowerRepository->findOneByUser($user);
+
+
+            if ($borrower->getId() != $userBorrower->getId()) {
+                return $this->redirectToRoute($route, [
+                    'id' => $userBorrower->getId(),
+                ]);
+            }
         }
 
-        return $this->render('borrower/edit.html.twig', [
-            'borrower' => $borrower,
-            'form' => $form->createView(),
-        ]);
-    }
-
-    /**
-     * @Route("/{id}", name="borrower_delete", methods={"POST"})
-     */
-    public function delete(Request $request, Borrower $borrower): Response
-    {
-        if ($this->isCsrfTokenValid('delete'.$borrower->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->remove($borrower);
-            $entityManager->flush();
-        }
-
-        return $this->redirectToRoute('borrower_index', [], Response::HTTP_SEE_OTHER);
+        return null;
     }
 }

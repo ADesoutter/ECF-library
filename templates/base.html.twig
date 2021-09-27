@@ -14,52 +14,55 @@
         {% endblock %}
     </head>
     <body>
-  {# NAVBAR #}
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="{{path('book_index')}}">Bibliothèque</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item">
-        {% if is_granted('ROLE_ADMIN') %}
-          <a class="nav-link active" aria-current="page" href="{{path('type_index')}}">Genres</a>
-          {% endif %}
-        </li>
-        
-        <li class="nav-item">
-           {% if is_granted('ROLE_ADMIN') %}                     
-          <a class="nav-link" href="{{path('author_index')}}">Auteurs</a>
-          {% endif %}
-        </li>
-        <li class="nav-item">
-        {% if is_granted('ROLE_ADMIN') %}
-          <a class="nav-link" href="{{path('loan_index')}}">Emprunts</a>
-          {% endif %}
-        </li>
-        <li class="nav-item">
-        {% if is_granted('ROLE_ADMIN') %}
-          <a class="nav-link" href="{{path('borrower_index')}}">Emprunteurs</a>
-          {% endif %}
-        </li>
-        <li class="nav-item">
-        {% if is_granted('ROLE_ADMIN') %}
-          <a class="nav-link" href="{{path('user_index')}}">Utilisateurs</a>
-          {% endif %}
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{{path('app_login')}}">Connexion</a>
-        </li>
-      </ul>
-      <form action="{{path('home_index')}}" class="d-flex" method="post">
-        <input name="search" class="form-control me-2" type="search" placeholder="Rechercher" aria-label="Search">
-        <button type="submit" class="btn btn-info">Rechercher</button>
-      </form>
-    </div>
-  </div>
-</nav>
-        {% block body %}{% endblock %}
-    </body>
+        {# NAVBAR #}
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="{{path('book_index')}}">Bibliothèque</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="/">Page d'accueil</a>
+              </li>
+              {% if is_granted('ROLE_EMPRUNTEUR') %}
+              <li class="nav-item">
+                <a class="nav-link" aria-current="page" href="{{path('borrowing_index')}}">Mes emprunts</a>
+              </li>
+              {% endif %}
+              {% if is_granted('ROLE_ADMIN') %}     
+              <li class="nav-item">                   
+                <a class="nav-link" href="{{path('author_index')}}">Auteurs</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{{path('genre_index')}}">Genres</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{{path('borrowing_index')}}">Emprunts</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{{path('borrower_index')}}">Emprunteurs</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{{path('user_index')}}">Utilisateurs</a>
+                {% endif %}
+              </li>
+              <li class="nav-item">
+              {% if app.user %}
+                <a class="nav-link" href="{{ path('app_logout') }}">Me déconnecter ({{ app.user.username }})</a>
+              {% else %}
+                <a class="nav-link" href="{{path('app_login')}}">Connexion</a>
+              {% endif %}
+              </li>
+            </ul>
+            <form action="{{path('home_index')}}" class="d-flex" method="post">
+              <input name="search" class="form-control me-2" type="search" placeholder="Rechercher" aria-label="Search">
+              <button type="submit" class="btn btn-info">Rechercher</button>
+            </form>
+          </div>
+        </div>
+      </nav>
+    {% block body %}{% endblock %}
+  </body>
 </html>

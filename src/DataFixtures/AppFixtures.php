@@ -271,7 +271,7 @@ class AppFixtures extends Fixture
         return $borrowers;
     }
 
-    public function loadBorrowings(ObjectManager $manager, array $borrowers, $books, int $count)
+    public function loadBorrowings(ObjectManager $manager, array $borrowers, array $books, int $count)
     {
 
         $borrowings = [];
@@ -279,11 +279,7 @@ class AppFixtures extends Fixture
         // 1er Emprunt
         $borrowing = new Borrowing();
         $borrowing->setBorrowingDate (\DateTime::createFromFormat('Y-m-d H:i:s','2020-02-01 10:00:00'));
-        $borrowingDate = $borrowing->getBorrowingDate();
-        $returnDate = \DateTime::createFromFormat('Y-m-d H:i:s',  $borrowingDate->format('Y-m-d H:i:s'));
-        // ajout d'un interval d' 1 mois à la date de début   
-        $returnDate->add(new \DateInterval('P1M'));
-        $borrowing->setReturnDate($returnDate);
+        $borrowing->setReturnDate (\DateTime::createFromFormat('Y-m-d H:i:s','2020-03-01 10:00:00'));
         $borrowing->setBorrower($borrowers[0]);
         $borrowing->setBook($books[0]);
 
@@ -293,11 +289,7 @@ class AppFixtures extends Fixture
         // 2ème emprunt
         $borrowing = new Borrowing();
         $borrowing->setBorrowingDate(\DateTime::createFromFormat('Y-m-d H:i:s', '2020-03-01 10:00:00'));
-        $borrowingDate = $borrowing->getBorrowingDate();
-        $returnDate = \DateTime::createFromFormat('Y-m-d H:i:s',  $borrowingDate->format('Y-m-d H:i:s'));
-        // ajout d'un interval d' 1 mois à la date de début
-        $returnDate->add(new \DateInterval('P1M'));
-        $borrowing->setReturnDate($returnDate);
+        $borrowing->setReturnDate (\DateTime::createFromFormat('Y-m-d H:i:s','2020-04-01 10:00:00'));
         $borrowing->setBorrower($borrowers[1]);
         $borrowing->setBook($books[1]);
 
@@ -307,6 +299,7 @@ class AppFixtures extends Fixture
         // 3ème emprunt
         $borrowing = new Borrowing();
         $borrowing->setBorrowingDate(\DateTime::createFromFormat('Y-m-d H:i:s', '2020-04-01 10:00:00'));
+        $borrowing->setReturnDate(NULL);
         $borrowing->setBorrower($borrowers[2]);
         $borrowing->setBook($books[2]);
 
